@@ -2,9 +2,13 @@
 
 A complete React/Vite + Express/Mongoose + MongoDB + Socket.io chat application built from all five modules of the nine-page Sapphire IQ guide. Includes private conversations, groups, persisted and paginated history, images, presence, typing, unread counts and read receipts.
 
-![Sapphire Chat desktop interface](docs/screenshots/desktop.png)
+## Running locally
 
-[Mobile screenshot](docs/screenshots/mobile.png)
+Screenshots below show the real app running locally against seeded MongoDB data. The desktop view uses two signed-in browser sessions to demonstrate online presence and read receipts. No live deployment is required.
+
+![Sapphire Chat running locally on desktop](docs/screenshots/desktop.png)
+
+<img src="docs/screenshots/mobile.png" alt="Sapphire Chat running locally on a 390-pixel mobile screen" width="320" />
 
 ## Run locally
 
