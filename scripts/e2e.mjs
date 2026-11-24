@@ -52,7 +52,11 @@ try {
   const jamieContext = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const alex = await alexContext.newPage(),
     jamie = await jamieContext.newPage();
-  for (const page of [alex, jamie]) page.on('pageerror', (e) => errors.push(e.message));
+  for (const page of [alex, jamie])
+    page.on('pageerror', (e) => {
+      errors.push(e.message);
+      console.error('Browser runtime error:', e.message, e.stack);
+    });
   async function login(page, email) {
     await page.goto(web);
     await page.getByLabel('Email address').fill(email);
@@ -129,6 +133,9 @@ try {
   await expect(
     jamie.locator('.message-scroll').getByText('An image for the whole team', { exact: true }),
   ).toBeVisible();
+  await expect(alex.locator('.attachment-preview')).toHaveCount(0);
+  await expect(alex.getByLabel('Message', { exact: true })).toHaveValue('');
+  expect(errors).toEqual([]);
   console.log(
     'PASS group creation, admin member addition and image message end to end (cloud storage stubbed)',
   );

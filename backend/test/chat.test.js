@@ -195,15 +195,24 @@ test('REST messages persist once under concurrent retries; cursor pages are stab
     .get(`/api/conversations/${chat._id}/messages?limit=2&after=3`)
     .set(authorization(c))
     .expect(200);
-  assert.deepEqual(catchup.body.messages.map((m) => m.seq), [4, 5]);
+  assert.deepEqual(
+    catchup.body.messages.map((m) => m.seq),
+    [4, 5],
+  );
   assert.equal(catchup.body.nextCursor, 5);
   const next = await api
     .get(`/api/conversations/${chat._id}/messages?limit=2&after=${catchup.body.nextCursor}`)
     .set(authorization(c))
     .expect(200);
-  assert.deepEqual(next.body.messages.map((m) => m.seq), [6, 7]);
+  assert.deepEqual(
+    next.body.messages.map((m) => m.seq),
+    [6, 7],
+  );
   assert.equal(next.body.nextCursor, null);
-  await api.get(`/api/conversations/${chat._id}/messages?before=3&after=1`).set(authorization(c)).expect(400);
+  await api
+    .get(`/api/conversations/${chat._id}/messages?before=3&after=1`)
+    .set(authorization(c))
+    .expect(400);
   await send(a, chat._id, '').expect(400);
   await send(a, chat._id, 'a'.repeat(4001)).expect(400);
 });

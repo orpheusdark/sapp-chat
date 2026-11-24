@@ -11,13 +11,11 @@ test('protected chat redirects to login and surfaces rejected credentials', asyn
   history.replaceState({}, '', '/chat');
   vi.stubGlobal(
     'fetch',
-    vi
-      .fn()
-      .mockResolvedValue({
-        ok: false,
-        status: 401,
-        json: async () => ({ error: 'Email or password is incorrect' }),
-      }),
+    vi.fn().mockResolvedValue({
+      ok: false,
+      status: 401,
+      json: async () => ({ error: 'Email or password is incorrect' }),
+    }),
   );
   render(<App />);
   expect(await screen.findByText('Welcome back.')).toBeInTheDocument();

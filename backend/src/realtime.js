@@ -89,14 +89,12 @@ export function attachRealtime(server, config) {
         await member(conversationId, uid);
         if (active) typingRooms.add(conversationId);
         else typingRooms.delete(conversationId);
-        socket
-          .to(room(conversationId))
-          .emit('typing', {
-            conversationId,
-            userId: uid,
-            name: socket.data.user.name,
-            active: !!active,
-          });
+        socket.to(room(conversationId)).emit('typing', {
+          conversationId,
+          userId: uid,
+          name: socket.data.user.name,
+          active: !!active,
+        });
         return true;
       }),
     );

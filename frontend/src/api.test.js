@@ -38,13 +38,11 @@ describe('message reconciliation', () => {
 describe('API boundary', () => {
   afterEach(() => vi.unstubAllGlobals());
   it('sends authentication and JSON body and surfaces API errors', async () => {
-    const fetcher = vi
-      .fn()
-      .mockResolvedValue({
-        ok: false,
-        status: 403,
-        json: async () => ({ error: 'Only admins can add people' }),
-      });
+    const fetcher = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 403,
+      json: async () => ({ error: 'Only admins can add people' }),
+    });
     vi.stubGlobal('fetch', fetcher);
     await expect(
       request('/conversations/a/members', {

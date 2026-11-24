@@ -476,6 +476,7 @@ function ChatPage() {
   const socketRef = useRef(null);
   const activeRef = useRef(null);
   const messagesRef = useRef([]);
+  const syncedSeq = useRef({});
   const scrollRef = useRef(null);
   const shouldScroll = useRef(true);
   const typingTimer = useRef(null);
@@ -483,6 +484,8 @@ function ChatPage() {
   const retryId = useRef(null);
   const seenSeq = useRef({});
   const listRequest = useRef(0);
+  const refreshTimer = useRef(null);
+  const pendingReads = useRef({});
   const active = conversations.find((c) => c._id === activeId);
   activeRef.current = activeId;
   messagesRef.current = messages;
@@ -492,34 +495,54 @@ function ChatPage() {
     if (version === listRequest.current) setConversations(list);
     return list;
   }, [api]);
+  const scheduleRefresh = useCallback(() => {
+    if (refreshTimer.current) return;
+    refreshTimer.current = setTimeout(() => {
+      refreshTimer.current = null;
+      refresh().catch((e) => setError(e.message));
+    }, 120);
+  }, [refresh]);
   const catchUp = useCallback(
     async (cid) => {
       // Fetch forward from the last contiguous loaded point, including long disconnects.
-      let after = messagesRef.current.at(-1)?.seq || 0;
+      let after = syncedSeq.current[cid] || 0;
       for (;;) {
         const data = await api(`/conversations/${cid}/messages?after=${after}&limit=100`);
         if (activeRef.current !== cid) return;
         setMessages((prev) => mergeMessages(prev, data.messages));
-        if (data.messages.length) after = data.messages.at(-1).seq;
+        if (data.messages.length) {
+          after = data.messages.at(-1).seq;
+          syncedSeq.current[cid] = Math.max(syncedSeq.current[cid] || 0, after);
+        }
         if (data.nextCursor === null) return after;
       }
     },
     [api],
   );
   const read = useCallback(
-    async (cid, seq) => {
+    (cid, seq) => {
       if (!seq || document.visibilityState === 'hidden' || (seenSeq.current[cid] || 0) >= seq)
         return;
-      seenSeq.current[cid] = seq;
-      try {
-        await api(`/conversations/${cid}/read`, { method: 'POST', body: { seq } });
-        await refresh();
-      } catch (e) {
-        delete seenSeq.current[cid];
-        setError(e.message);
+      if (pendingReads.current[cid]) {
+        pendingReads.current[cid].seq = Math.max(pendingReads.current[cid].seq, seq);
+        return;
       }
+      const entry = { seq };
+      entry.timer = setTimeout(async () => {
+        delete pendingReads.current[cid];
+        if (activeRef.current !== cid || document.visibilityState === 'hidden') return;
+        seenSeq.current[cid] = entry.seq;
+        try {
+          await api(`/conversations/${cid}/read`, { method: 'POST', body: { seq: entry.seq } });
+          scheduleRefresh();
+        } catch (e) {
+          if ((seenSeq.current[cid] || 0) <= entry.seq) delete seenSeq.current[cid];
+          setError(e.message);
+        }
+      }, 120);
+      pendingReads.current[cid] = entry;
     },
-    [api, refresh],
+    [api, scheduleRefresh],
   );
   useEffect(() => {
     let live = true;
@@ -551,9 +574,11 @@ function ChatPage() {
         setError(e.message);
       }
     });
-    socket.on('conversation:updated', () => refresh().catch((e) => setError(e.message)));
+    socket.on('conversation:updated', scheduleRefresh);
     socket.on('message:new', (message) => {
       if (message.conversation === activeRef.current) {
+        if (message.seq === (syncedSeq.current[message.conversation] || 0) + 1)
+          syncedSeq.current[message.conversation] = message.seq;
         const element = scrollRef.current;
         shouldScroll.current =
           !element ||
@@ -562,9 +587,9 @@ function ChatPage() {
         setMessages((prev) => mergeMessages(prev, [message]));
         read(message.conversation, message.seq);
       }
-      refresh().catch((e) => setError(e.message));
+      scheduleRefresh();
     });
-    socket.on('conversation:read', () => refresh().catch((e) => setError(e.message)));
+    socket.on('conversation:read', scheduleRefresh);
     socket.on('typing', (event) =>
       setTypers((prev) => ({
         ...prev,
@@ -598,10 +623,14 @@ function ChatPage() {
       live = false;
       clearInterval(timer);
       clearTimeout(typingTimer.current);
+      clearTimeout(refreshTimer.current);
+      refreshTimer.current = null;
+      for (const pending of Object.values(pendingReads.current)) clearTimeout(pending.timer);
+      pendingReads.current = {};
       socket.disconnect();
       document.removeEventListener('visibilitychange', onVisible);
     };
-  }, [api, refresh, read, catchUp, token, user._id]);
+  }, [api, refresh, scheduleRefresh, read, catchUp, token, user._id]);
   useEffect(() => {
     if (!activeId) {
       setMessages([]);
@@ -620,6 +649,7 @@ function ChatPage() {
     socketRef.current?.emit('conversation:join', { conversationId: cid });
     api(`/conversations/${cid}/messages`, { signal: controller.signal })
       .then((data) => {
+        syncedSeq.current[cid] = data.messages.at(-1)?.seq || 0;
         setMessages((prev) => mergeMessages(data.messages, prev));
         setCursor(data.nextCursor);
         read(cid, data.messages.at(-1)?.seq);
@@ -1114,7 +1144,7 @@ function ChatPage() {
               )}
             </div>
             <footer className="composer-area">
-              {preview && (
+              {preview && file && (
                 <div className="attachment-preview">
                   <img src={preview} alt="Image ready to send" />
                   <span>{file.name}</span>

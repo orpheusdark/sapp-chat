@@ -180,13 +180,11 @@ export function createApplication(config, options = {}) {
   });
   app.post('/api/conversations/:id/read', async (req, res) => {
     const seq = await markRead(req.params.id, req.user._id, req.body.seq);
-    realtime.io
-      .to(`conversation:${req.params.id}`)
-      .emit('conversation:read', {
-        conversationId: req.params.id,
-        userId: String(req.user._id),
-        seq,
-      });
+    realtime.io.to(`conversation:${req.params.id}`).emit('conversation:read', {
+      conversationId: req.params.id,
+      userId: String(req.user._id),
+      seq,
+    });
     res.json({ seq });
   });
   const imageLimit = rateLimit({
@@ -227,13 +225,9 @@ export function createApplication(config, options = {}) {
   app.use((req, res) => res.status(404).json({ error: 'Route not found' }));
   app.use((error, req, res, next) => {
     if (error instanceof ZodError)
-      return res
-        .status(400)
-        .json({
-          error: error.issues
-            .map((i) => `${i.path.join('.') || 'Request'}: ${i.message}`)
-            .join('; '),
-        });
+      return res.status(400).json({
+        error: error.issues.map((i) => `${i.path.join('.') || 'Request'}: ${i.message}`).join('; '),
+      });
     if (error.code === 11000)
       return res.status(409).json({ error: 'This email is already registered' });
     if (error.code === 'LIMIT_FILE_SIZE')
