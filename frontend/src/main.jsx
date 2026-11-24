@@ -101,9 +101,7 @@ function Logo() {
       <span>
         <MessageSquare size={24} fill="currentColor" />
       </span>
-      <div>
-        Sapphire<span className="logo-chat">chat</span>
-      </div>
+      <div>orphchat</div>
     </div>
   );
 }
@@ -815,7 +813,7 @@ function ChatPage() {
       <aside className="sidebar">
         <div className="workspace-title">
           <div>
-            <strong>Sapphire</strong>
+            <strong>orphchat</strong>
             <span>YOUR EVERYDAY CONNECTION</span>
           </div>
           <span className="workspace-badge">CHAT</span>

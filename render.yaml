@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: sapphire-chat-api
+    name: orphchat-api
     runtime: node
     region: singapore
     plan: free

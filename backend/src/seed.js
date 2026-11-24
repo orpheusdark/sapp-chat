@@ -11,10 +11,10 @@ export async function seed(password) {
     throw new Error('Set SEED_PASSWORD to a password with at least 12 characters');
   const people = [];
   for (const [name, email] of [
-    ['Alex Morgan', 'alex@sapphire.test'],
-    ['Jamie Chen', 'jamie@sapphire.test'],
-    ['Sofia Rivera', 'sofia@sapphire.test'],
-    ['Noah Williams', 'noah@sapphire.test'],
+    ['Alex Morgan', 'alex@orphchat.test'],
+    ['Jamie Chen', 'jamie@orphchat.test'],
+    ['Sofia Rivera', 'sofia@orphchat.test'],
+    ['Noah Williams', 'noah@orphchat.test'],
   ]) {
     let user = await User.findOne({ email });
     if (!user)
@@ -81,7 +81,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     await initializeModels();
     await seed(process.env.SEED_PASSWORD);
     console.log(
-      'Seed ready: alex@sapphire.test, jamie@sapphire.test, sofia@sapphire.test, noah@sapphire.test. Password is your SEED_PASSWORD; existing passwords are unchanged.',
+      'Seed ready: alex@orphchat.test, jamie@orphchat.test, sofia@orphchat.test, noah@orphchat.test. Password is your SEED_PASSWORD; existing passwords are unchanged.',
     );
   } finally {
     await mongoose.disconnect();

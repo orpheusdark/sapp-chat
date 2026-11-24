@@ -7,7 +7,7 @@ await mongoose.connect(config.MONGODB_URI, { serverSelectionTimeoutMS: 10000 });
 await initializeModels();
 const { server, io } = createApplication(config);
 server.listen(config.PORT, '0.0.0.0', () =>
-  console.log(`Sapphire API listening on port ${config.PORT}`),
+  console.log(`orphchat API listening on port ${config.PORT}`),
 );
 let stopping = false;
 async function stop() {

@@ -67,8 +67,8 @@ try {
   await mkdir('artifacts', { recursive: true });
   await alex.goto(web);
   await alex.screenshot({ path: 'artifacts/login-desktop.png', fullPage: true });
-  await login(alex, 'alex@sapphire.test');
-  await login(jamie, 'jamie@sapphire.test');
+  await login(alex, 'alex@orphchat.test');
+  await login(jamie, 'jamie@orphchat.test');
   await alex.locator('.conversation-row').filter({ hasText: 'Jamie Chen' }).click();
   await expect(
     alex

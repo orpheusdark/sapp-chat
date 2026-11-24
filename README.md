@@ -1,4 +1,4 @@
-# Sapphire Chat
+# orphchat
 
 A complete React/Vite + Express/Mongoose + MongoDB + Socket.io chat application built from all five modules of the nine-page Sapphire IQ guide. Includes private conversations, groups, persisted and paginated history, images, presence, typing, unread counts and read receipts.
 
@@ -6,9 +6,9 @@ A complete React/Vite + Express/Mongoose + MongoDB + Socket.io chat application 
 
 Screenshots below show the real app running locally against seeded MongoDB data. The desktop view uses two signed-in browser sessions to demonstrate online presence and read receipts. No live deployment is required.
 
-![Sapphire Chat running locally on desktop](docs/screenshots/desktop.png)
+![orphchat running locally on desktop](docs/screenshots/desktop.png)
 
-<img src="docs/screenshots/mobile.png" alt="Sapphire Chat running locally on a 390-pixel mobile screen" width="320" />
+<img src="docs/screenshots/mobile.png" alt="orphchat running locally on a 390-pixel mobile screen" width="320" />
 
 ## Run locally
 
@@ -51,7 +51,7 @@ Set `SEED_PASSWORD` in `backend/.env` to at least 12 characters, then run:
 npm run seed
 ```
 
-Sign in as `alex@sapphire.test`, `jamie@sapphire.test`, `sofia@sapphire.test`, or `noah@sapphire.test` with your seed password. The seed adds private chats, a four-person group and example messages. Re-running does not delete data or change existing passwords. Demo seeding is disabled in production.
+Sign in as `alex@orphchat.test`, `jamie@orphchat.test`, `sofia@orphchat.test`, or `noah@orphchat.test` with your seed password. The seed adds private chats, a four-person group and example messages. Re-running does not delete data or change existing passwords. Demo seeding is disabled in production.
 
 ## Features
 

@@ -27,7 +27,7 @@ Set these backend environment variables:
 | `NODE_ENV`              | `production`                                                         |
 | `MONGODB_URI`           | Your Atlas URI                                                       |
 | `JWT_SECRET`            | High-entropy secret, at least 32 characters; Blueprint generates one |
-| `CLIENT_ORIGINS`        | Exact frontend origin, e.g. `https://sapp-chat.vercel.app`           |
+| `CLIENT_ORIGINS`        | Exact frontend origin, e.g. `https://orphchat.vercel.app`            |
 | `TRUST_PROXY`           | `1` for Render's reverse proxy                                       |
 | `CLOUDINARY_CLOUD_NAME` | Your cloud name                                                      |
 | `CLOUDINARY_API_KEY`    | Your API key                                                         |
