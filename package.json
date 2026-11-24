@@ -1,7 +1,25 @@
 {
-  "name": "sapphire-chat", "private": true, "version": "1.0.0",
-  "workspaces": ["backend", "frontend"],
-  "engines": {"node": ">=22.12.0"},
-  "scripts": {"dev": "concurrently -k -n api,web \"npm run dev -w backend\" \"npm run dev -w frontend\"", "build": "npm run build -w frontend", "test": "npm run test -w backend && npm run test -w frontend", "seed": "npm run seed -w backend", "test:e2e": "node scripts/e2e.mjs"},
-  "devDependencies": {"concurrently": "^9.2.1", "@playwright/test": "^1.56.1", "mongodb-memory-server": "^10.3.0"}
+  "name": "sapphire-chat",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n api,web \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "build": "npm run build -w frontend",
+    "test": "npm run test -w backend && npm run test -w frontend",
+    "seed": "npm run seed -w backend",
+    "test:e2e": "node scripts/e2e.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "concurrently": "^9.2.1",
+    "mongodb-memory-server": "^10.3.0",
+    "prettier": "^3.10.1"
+  }
 }
